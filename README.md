@@ -1,6 +1,23 @@
-# Getting Started with Create React App
+# eventlabs-tts-example-app
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+An example project using [Elevenlabs's](https://elevenlabs.io/) text-to-speech API and React.
+
+## Instructions
+
+- Install the packages
+
+```bash
+npm i
+```
+
+- Setup the environment variables (see the [.env.example](/.env.example) file).
+
+```r
+REACT_APP_ELEVENLABS_VOICE_ID= # EVENTLABS VOICE ID
+REACT_APP_ELEVENLABS_API_KEY= # EVENTLABS API KEY
+```
+
+> This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
 
