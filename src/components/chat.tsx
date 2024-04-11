@@ -3,7 +3,16 @@ import TextMessage from "./text-message";
 import { Textarea } from "./ui/textarea";
 import { Button } from "./ui/button";
 import { CornerDownLeft } from "lucide-react";
-import { FormEvent, useEffect, useRef, useState } from "react";
+import {
+  FormEvent,
+  Fragment,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import textToSpeech from "../services/elevenlabs/textToSpeech";
+import { AudioLines } from "lucide-react";
 
 const Chat = () => {
   const [messages, setMessages] = useState<string[]>([]);
@@ -12,11 +21,15 @@ const Chat = () => {
 
   const { current: textAreaElement } = textAreaRef;
 
+  const pushMessage = useCallback((message: string) => {
+    setMessages((x) => [...x, message]);
+    setInput("");
+    requestSpeech(message);
+  }, []);
+
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    setMessages((x) => [...x, input]);
-    setInput("");
+    pushMessage(input);
   };
 
   useEffect(() => {
@@ -25,8 +38,7 @@ const Chat = () => {
         if (!event.repeat) {
           // const newEvent = new Event("onSubmit", { cancelable: true });
           // event.target.form.dispatchEvent(newEvent);
-          setMessages((x) => [...x, event.target.value]);
-          setInput("");
+          pushMessage(event.target.value);
         }
 
         event.preventDefault();
@@ -38,7 +50,18 @@ const Chat = () => {
     return () => {
       textAreaElement?.removeEventListener("keydown", submitOnEnter);
     };
-  }, [textAreaElement]);
+  }, [textAreaElement, pushMessage]);
+
+  const requestSpeech = async (text: string) => {
+    console.log("requestSpeech ");
+    try {
+      const res = await textToSpeech(text);
+      console.log("res", res);
+      setMessages((x) => [...x, "*"]);
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   return (
     <div className="relative flex h-full min-h-[50vh] flex-col rounded-xl bg-muted/50 p-4 lg:col-span-0 justify-end">
@@ -47,7 +70,15 @@ const Chat = () => {
             </Badge> */}
       <div className="-mt-4 -mx-4 p-4 overflow-y-auto flex flex-col space-y-2">
         {messages.map((message, index) => (
-          <TextMessage key={index}>{message}</TextMessage>
+          <Fragment key={index}>
+            {message === "*" ? (
+              <TextMessage side="right">
+                <AudioLines className="relative size-5" />
+              </TextMessage>
+            ) : (
+              <TextMessage>{message}</TextMessage>
+            )}
+          </Fragment>
         ))}
       </div>
       <form

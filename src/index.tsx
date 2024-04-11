@@ -6,7 +6,6 @@ import {
   Book,
   Bot,
   Code2,
-  CornerDownLeft,
   Rabbit,
   Settings,
   Settings2,
@@ -40,7 +39,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "./components/ui/tooltip";
-import TextMessage from "./components/text-message";
 import Chat from "./components/chat";
 
 function App() {
