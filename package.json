@@ -39,6 +39,16 @@
     "extends": [
       "react-app",
       "react-app/jest"
+    ],
+    "overrides": [
+      {
+        "files": [
+          "**/*.ts?(x)"
+        ],
+        "rules": {
+          "jsx-a11y/heading-has-content": "off"
+        }
+      }
     ]
   },
   "browserslist": {
