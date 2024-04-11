@@ -6,7 +6,7 @@ type Props = {
   side?: "left" | "right";
 };
 
-const Message = ({ children, side = "left" }: PropsWithChildren<Props>) => {
+const TextMessage = ({ children, side = "left" }: PropsWithChildren<Props>) => {
   return (
     <div
       className={cn(
@@ -19,4 +19,4 @@ const Message = ({ children, side = "left" }: PropsWithChildren<Props>) => {
   );
 };
 
-export default Message;
+export default TextMessage;
