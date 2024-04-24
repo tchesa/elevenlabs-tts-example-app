@@ -1,5 +1,5 @@
 import { Label } from "@radix-ui/react-label";
-import TextMessage from "./text-message";
+import TextMessageComponent from "./text-message";
 import { Textarea } from "./ui/textarea";
 import { Button } from "./ui/button";
 import { CornerDownLeft } from "lucide-react";
@@ -12,17 +12,29 @@ import {
   useState,
 } from "react";
 import textToSpeech from "../services/elevenlabs/textToSpeech";
-import { AudioLines } from "lucide-react";
+import AudioMessage from "./audio-message";
+
+type TextMessage = {
+  type: "text";
+  message: string;
+};
+
+type VoiceMessage = {
+  type: "voice";
+  url: string;
+};
+
+type Message = TextMessage | VoiceMessage;
 
 const Chat = () => {
-  const [messages, setMessages] = useState<string[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState<string>("");
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
   const { current: textAreaElement } = textAreaRef;
 
   const pushMessage = useCallback((message: string) => {
-    setMessages((x) => [...x, message]);
+    setMessages((x) => [...x, { type: "text", message }]);
     setInput("");
     requestSpeech(message);
   }, []);
@@ -55,9 +67,9 @@ const Chat = () => {
   const requestSpeech = async (text: string) => {
     console.log("requestSpeech ");
     try {
-      const res = await textToSpeech(text);
-      console.log("res", res);
-      setMessages((x) => [...x, "*"]);
+      const blob = await textToSpeech(text);
+      console.log("res", blob);
+      setMessages((x) => [...x, { type: "voice", url: blob }]);
     } catch (e) {
       console.error(e);
     }
@@ -71,12 +83,10 @@ const Chat = () => {
       <div className="-mt-4 -mx-4 p-4 overflow-y-auto flex flex-col space-y-2">
         {messages.map((message, index) => (
           <Fragment key={index}>
-            {message === "*" ? (
-              <TextMessage side="right">
-                <AudioLines className="relative size-5" />
-              </TextMessage>
+            {message.type === "voice" ? (
+              <AudioMessage side="right" url={message.url} />
             ) : (
-              <TextMessage>{message}</TextMessage>
+              <TextMessageComponent>{message.message}</TextMessageComponent>
             )}
           </Fragment>
         ))}

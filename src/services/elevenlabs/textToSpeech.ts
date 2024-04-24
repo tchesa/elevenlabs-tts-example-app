@@ -1,6 +1,6 @@
 import client from "./client";
 
-const textToSpeech = async (text: string): Promise<unknown> => {
+const textToSpeech = async (text: string): Promise<string> => {
   console.log("ELEVENLABS_VOICE_ID", process.env.REACT_APP_ELEVENLABS_VOICE_ID);
   const response = await client.post(
     `/v1/text-to-speech/${process.env.REACT_APP_ELEVENLABS_VOICE_ID}`,
@@ -18,7 +18,8 @@ const textToSpeech = async (text: string): Promise<unknown> => {
   const file = new File([response.data], "audio.mp3", { type: "audio/mpeg" });
 
   const url = URL.createObjectURL(file);
-  return new Audio(url).play();
+  return url;
+  // return new Audio(url).play();
 };
 
 export default textToSpeech;
